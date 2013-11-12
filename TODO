@@ -1,0 +1,5 @@
+TODO for 1.0:
+
+1.  Get has_dbmethod working and with a stable API.
+
+2.  Add contextual return support.
