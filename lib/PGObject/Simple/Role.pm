@@ -3,7 +3,6 @@ package PGObject::Simple::Role;
 use 5.006;
 use strict;
 use warnings;
-use Carp::Always;
 use Moo::Role;
 use PGObject::Simple;
 use Carp;

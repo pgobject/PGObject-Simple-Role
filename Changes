@@ -1,5 +1,9 @@
 Revision history for PGObject-Simple-Role
 
+0.50	2013-11-13
+	Refactored to centralize logic in PGObject::Simple
+	Added dbmethod() for declaratively defining database methods.
+
 0.13    2013-11-06
         Fixed test cases requiring Carp::Always, which was not in makefile.
 
