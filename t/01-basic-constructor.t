@@ -45,9 +45,9 @@ is($obj->foo, 'test1', 'attribute foo passed');
 is($obj->bar, 'test2', 'attribute bar passed');
 is($obj->baz, 33, 'attribute baz passed');
 ok(!defined($obj->can('biz')), 'No dbh method exists');
-throws_ok {$obj->_build__PGObject_DBH(1)} qr/Subclasses MUST set/, 
+throws_ok {$obj->_build__DBH(1)} qr/Subclasses MUST set/, 
           'Threw exception, "Subclasses MUST set"';
 
 lives_ok {$obj = test2->new(%args)} 'created new object without crashing';
-throws_ok {$obj->_PGObject_DBH} qr/Expected a database handle/, 
+throws_ok {$obj->_DBH} qr/Expected a database handle/, 
           'Threw exception, "Expected a database handle"';

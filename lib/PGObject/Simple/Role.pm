@@ -3,6 +3,7 @@ package PGObject::Simple::Role;
 use 5.006;
 use strict;
 use warnings;
+use Carp::Always;
 use Moo::Role;
 use PGObject::Simple;
 use Carp;
@@ -13,11 +14,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 0.11
+Version 0.50 
 
 =cut
 
-our $VERSION = '0.13';
+our $VERSION = '0.50';
 
 
 =head1 SYNOPSIS
@@ -36,6 +37,7 @@ Take the following (Moose) class:
     sub get_dbh {
         return DBI->connect('dbi:Pg:dbname=foobar');
     }
+    dbmethod(int => (funcname => 'foo_to_int'));
 
 And a stored procedure:  
 
@@ -51,8 +53,13 @@ Then the following Perl code would work to invoke it:
     my $foobar = MyApp->foo(id => 3, foo => 'foo', bar => 'baz', baz => 33);
     $foobar->call_dbmethod(funcname => 'foo_to_int');
 
+The following will also work since you have the dbmethod call above:
+
+    my $int = $foobar->int;
+
 The full interface of call_dbmethod and call_procedure from PGObject::Simple are
-supported.
+supported, and call_dbmethod is effectively wrapped by dbmethod(), allowing a
+declarative mapping.
 
 =head1 DESCRIPTION
 
@@ -64,7 +71,7 @@ supported.
 
 # Private attribute for database handle, not intended to be directly set.
 
-has _PGObject_DBH => ( 
+has _DBH => ( 
        is => 'lazy', 
        isa => sub { 
                     croak "Expected a database handle.  Got $_[0] instead"
@@ -72,21 +79,38 @@ has _PGObject_DBH => (
        },
 );
 
-sub _build__PGObject_DBH {
+sub _build__DBH {
     my ($self) = @_;
     return $self->_get_dbh;
 }
 
-has _PGObject_FuncPrefix => (is => 'lazy');
+has _Registry => (is => 'lazy');
 
-=head1 _get_prefix
+sub _build__Registry {
+    return _get_registry();
+}
+
+=head2 _get_registry
+
+This is a method the consuming classes can override in order to set the
+registry of the calls for type mapping purposes.
+
+=cut
+
+sub _get_registry{
+    return undef;
+}
+
+has _funcprefix => (is => 'lazy');
+
+=head2 _get_prefix
 
 Returns string, default is an empty string, used to set a prefix for mapping
 stored prcedures to an object class.
 
 =cut
 
-sub _build__PGObject_FuncPrefix {
+sub _build__funcprefix {
     return $_[0]->_get_prefix;
 }
 
@@ -99,7 +123,19 @@ has _PGObject_Simple => (
 );
 
 sub _build__PGObject_Simple {
-    return PGObject::Simple->new();
+    my ($self) = @_;
+    return PGObject::Simple->new() unless ref $self;
+    $self->_DBH;
+    $self->_funcprefix;
+    my $obj = PGObject::Simple->new(%$self);
+    $obj->_set_registry($self->_registry);
+    return $obj;
+}
+
+has _registry => ( is => 'lazy' );
+
+sub _build__registry {
+    return _get_registry();
 }
 
 =head2 _get_dbh
@@ -126,13 +162,14 @@ mypackage->call_procedure() and $myobject->call_procedure() both work.
 sub call_procedure {
     my $self = shift @_;
     my %args = @_;
-    $args{dbh} ||= $self->_PGObject_DBH if ref $self;
-    $args{dbh} ||= "$self"->_get_dbh;
-    my $fprefix = $self->_PGObject_FuncPrefix if ref $self;
-    $fprefix = "$self"->_get_prefix if not defined $fprefix;
-    $args{funcprefix} = $fprefix if not defined $args{funcprefix};
-    return $self->_PGObject_Simple->call_procedure(%args) if ref $self;
-    return _build__PGObject_Simple->call_procedure(%args);
+    my $obj = _build__PGObject_Simple($self);
+    $obj->{_DBH} = "$self"->_get_dbh unless ref $self;
+    if (ref $self){
+        $args{funcprefix} = $self->_get_prefix;
+    } else {
+        $args{funcprefix} = "$self"->_get_prefix;
+    }
+    return $obj->call_procedure(%args);
 }
 
 =head2 call_dbmethod
@@ -147,78 +184,77 @@ mypackage->call_dbmethod() and $myobject->call_dbmethod() both work.
 sub call_dbmethod {
     my $self = shift @_;
     my %args = @_;
-    $args{dbh} ||= $self->_PGObject_DBH if ref $self;
-    $args{dbh} ||= "$self"->_get_dbh;
-    my $fprefix = $self->_PGObject_FuncPrefix if ref $self;
-    $fprefix = "$self"->_get_prefix if not defined $fprefix;
-    $args{funcprefix} = $fprefix if not defined $args{funcprefix};
+    my $obj = _build__PGObject_Simple($self);
+    $obj->{_DBH} = "$self"->_get_dbh unless ref $self;
     if (ref $self){
-        for my $key(keys %$self){
-            $args{args}->{$key} = $self->{$key} 
-               unless defined $args{args}->{$key};
-        }
+        $args{funcprefix} = $self->_get_prefix;
+    } else {
+        $args{funcprefix} = "$self"->_get_prefix;
     }
-    return $self->_PGObject_Simple->call_dbmethod(%args) if ref $self;
-    return _build__PGObject_Simple->call_dbmethod(%args);
+    $obj->call_dbmethod(%args);
 }
 
-#=head2 has_dbmethod (EXPERIMENTAL)
-#
-#use as __PACKAGE__->has_dbmethod (name => (default_arghash))
-#
-#For example:
-#
-#  package MyObject;
-#  use Moo;
-#  with 'PGObject::Simple::Role';
-#  has_dbmethod(save => (
-#                                 strict_args => 0,
-#                                    funcname => 'save_user', 
-#                                      schema => 'public',
-#                                        args => { admin => 0 },
-#  );
-#  $MyObject->save(args => {username => 'foo', password => 'bar'});
-#
-#Special arguments are:
-#
-#=over
-#
-#=item strict_args
-#
-#If true, args override args provided by user.
-#
-#=item returns_objects
-#
-#If true, bless returned hashrefs before returning them.
-#
-#=cut
-#
-#sub has_dbmethod {
-#    no strict 'refs';
-#    my ($target) = caller;
-#    my $name = shift;
-#    my %defaultargs = @_;
-#    my $coderef = sub {
-#       my $self = shift @_;
-#       my %args = @_;
-#       for my $key (keys %{$defaultargs{args}}){
-#           $args{args}->{$key} = $defaultargs{args}->{$key} 
-#                  unless $args{args}->{$key} or $defaultargs{strict_args};
-#       }
-#       for my $key(keys %defaultargs){
-#           next if grep(/^$key$/, qw(strict_args args returns_objects));
-#           $args{$key} = $defaultargs{$key} if $defaultargs{$key};
-#       }
-#       my @results = $self->call_dbmethod(%args);
-#       if ($defaultargs{returns_objects}){
-#           for my $ref(@results){
-#               $ref = "$target"->new(%$ref);
-#           }
-#       }
-#       return @results;
-#    };
-#    *{"${target}::${name}"} = $coderef;
-#}
+=head2 dbmethod
+
+use as dbmethod (name => (default_arghash))
+
+For example:
+
+  package MyObject;
+  use Moo;
+  with 'PGObject::Simple::Role';
+  dbmethod(save => (
+                                 strict_args => 0,
+                                    funcname => 'save_user', 
+                                      schema => 'public',
+                                        args => { admin => 0 },
+  );
+  $MyObject->save(args => {username => 'foo', password => 'bar'});
+
+Special arguments are:
+
+=over
+
+=item strict_args
+
+If true, args override args provided by user.
+
+=item returns_objects
+
+If true, bless returned hashrefs before returning them.
+
+=back
+
+=cut
+
+
+sub dbmethod {
+    my $name = shift;
+    my %defaultargs = @_;
+    my ($target) = caller;
+
+    my $coderef = sub {
+       my $self = shift @_;
+       my %args = @_;
+       for my $key (keys %{$defaultargs{args}}){
+           $args{args}->{$key} = $defaultargs{args}->{$key} 
+                  unless $args{args}->{$key} or $defaultargs{strict_args};
+       }
+       for my $key(keys %defaultargs){
+           next if grep(/^$key$/, qw(strict_args args returns_objects));
+           $args{$key} = $defaultargs{$key} if $defaultargs{$key};
+       }
+       my @results = $self->call_dbmethod(%args);
+       if ($defaultargs{returns_objects}){
+           for my $ref(@results){
+               $ref = "$target"->new(%$ref);
+           }
+       }
+       return @results;
+    };
+    no strict 'refs';
+    *{"${target}::${name}"} = $coderef;
+}
 
 =head1 AUTHOR
 
