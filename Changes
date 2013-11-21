@@ -1,5 +1,8 @@
 Revision history for PGObject-Simple-Role
 
+0.52	TBD
+	Fixed funcprefix handling with call_procedure
+
 0.51	2013-11-20
 	Fixed inability to push funcprefix through to PGObject::Simple
 
