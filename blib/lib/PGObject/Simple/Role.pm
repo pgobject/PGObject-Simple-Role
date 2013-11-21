@@ -3,7 +3,6 @@ package PGObject::Simple::Role;
 use 5.006;
 use strict;
 use warnings;
-use Carp::Always;
 use Moo::Role;
 use PGObject::Simple;
 use Carp;
@@ -14,11 +13,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 0.50 
+Version 0.51 
 
 =cut
 
-our $VERSION = '0.50';
+our $VERSION = '0.51';
 
 
 =head1 SYNOPSIS
@@ -187,9 +186,10 @@ sub call_dbmethod {
     my $obj = _build__PGObject_Simple($self);
     $obj->{_DBH} = "$self"->_get_dbh unless ref $self;
     if (ref $self){
-        $args{funcprefix} = $self->_get_prefix;
+        $args{funcprefix} = $self->_get_prefix unless defined $args{funcprefix};
     } else {
-        $args{funcprefix} = "$self"->_get_prefix;
+        $args{funcprefix} = "$self"->_get_prefix 
+                              unless defined $args{funcprefix};
     }
     $obj->call_dbmethod(%args);
 }

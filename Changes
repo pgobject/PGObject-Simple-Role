@@ -1,5 +1,8 @@
 Revision history for PGObject-Simple-Role
 
+0.51	2013-11-20
+	Fixed inability to push funcprefix through to PGObject::Simple
+
 0.50	2013-11-13
 	Refactored to centralize logic in PGObject::Simple
 	Added dbmethod() for declaratively defining database methods.
