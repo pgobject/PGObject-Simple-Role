@@ -4,6 +4,7 @@ use 5.006;
 use strict;
 use warnings;
 use Moo::Role;
+use PGObject::Util::DBObject;
 use PGObject::Simple;
 use Carp;
 
@@ -13,11 +14,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 0.52 
+Version 0.70
 
 =cut
 
-our $VERSION = '0.52';
+our $VERSION = '0.70';
 
 
 =head1 SYNOPSIS
@@ -197,65 +198,15 @@ sub call_dbmethod {
 
 =head2 dbmethod
 
-use as dbmethod (name => (default_arghash))
+THIS SYNTAX IS DEPRECATED.
 
-For example:
+Instead of using this directly, use:
 
-  package MyObject;
-  use Moo;
-  with 'PGObject::Simple::Role';
-  dbmethod(save => (
-                                 strict_args => 0,
-                                    funcname => 'save_user', 
-                                      schema => 'public',
-                                        args => { admin => 0 },
-  );
-  $MyObject->save(args => {username => 'foo', password => 'bar'});
+   use PGObject::Util::DBMethod;
 
-Special arguments are:
-
-=over
-
-=item strict_args
-
-If true, args override args provided by user.
-
-=item returns_objects
-
-If true, bless returned hashrefs before returning them.
-
-=back
-
-=cut
-
-
-sub dbmethod {
-    my $name = shift;
-    my %defaultargs = @_;
-    my ($target) = caller;
-
-    my $coderef = sub {
-       my $self = shift @_;
-       my %args = @_;
-       for my $key (keys %{$defaultargs{args}}){
-           $args{args}->{$key} = $defaultargs{args}->{$key} 
-                  unless $args{args}->{$key} or $defaultargs{strict_args};
-       }
-       for my $key(keys %defaultargs){
-           next if grep(/^$key$/, qw(strict_args args returns_objects));
-           $args{$key} = $defaultargs{$key} if $defaultargs{$key};
-       }
-       my @results = $self->call_dbmethod(%args);
-       if ($defaultargs{returns_objects}){
-           for my $ref(@results){
-               $ref = "$target"->new(%$ref);
-           }
-       }
-       return @results;
-    };
-    no strict 'refs';
-    *{"${target}::${name}"} = $coderef;
-}
+instead.  This function merely allows you to use the dbmethod as exported by
+that module, but due to late binding, parentheses are needed.   Please do not
+use it for new code.  Chances are when we get to 2.0, this method will be gone.
 
 =head1 AUTHOR
 
