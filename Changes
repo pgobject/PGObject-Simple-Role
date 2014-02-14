@@ -1,6 +1,11 @@
 Revision history for PGObject-Simple-Role
 
-0.52	TBD
+0.70	2014-02-18
+	dbmethod() refactored so it is usable by libraries other than this one,
+	is better tested, and more general.  Use of the export here is now 
+	deprecated.
+
+0.52	2014-01-14
 	Fixed funcprefix handling with call_procedure
 
 0.51	2013-11-20
