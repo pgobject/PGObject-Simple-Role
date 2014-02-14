@@ -4,7 +4,7 @@ use 5.006;
 use strict;
 use warnings;
 use Moo::Role;
-use PGObject::Util::DBObject;
+use PGObject::Util::DBMethod;
 use PGObject::Simple;
 use Carp;
 
