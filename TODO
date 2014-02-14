@@ -1,5 +1,10 @@
 TODO for 1.0:
 
-1.  Get has_dbmethod working and with a stable API.
+1.  Get has_dbmethod working and with a stable API. 
+    Basically move to PGObject::Utils::DBMethod with an export.
 
 2.  Add contextual return support.
+
+3.  Handle lazy attributes.  This will require *not* going through 
+    PGObject::Simple in order to handle this properly.  OTOH, this will likely
+    be a general good thing.

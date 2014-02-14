@@ -13,11 +13,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 0.51 
+Version 0.52 
 
 =cut
 
-our $VERSION = '0.51';
+our $VERSION = '0.52';
 
 
 =head1 SYNOPSIS
@@ -164,9 +164,10 @@ sub call_procedure {
     my $obj = _build__PGObject_Simple($self);
     $obj->{_DBH} = "$self"->_get_dbh unless ref $self;
     if (ref $self){
-        $args{funcprefix} = $self->_get_prefix;
+        $args{funcprefix} = $self->_get_prefix unless defined $args{funcprefix};
     } else {
-        $args{funcprefix} = "$self"->_get_prefix;
+        $args{funcprefix} = "$self"->_get_prefix
+                 unless defined $args{funcprefix};
     }
     return $obj->call_procedure(%args);
 }
