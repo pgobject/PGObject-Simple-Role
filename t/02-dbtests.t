@@ -49,7 +49,6 @@ plan skip_all => 'Needs superuser connection for this test script' unless $dbh1;
 
 $dbh1->do('CREATE DATABASE pgobject_test_db');
 
-use Carp::Always;
 our $dbh = DBI->connect('dbi:Pg:dbname=pgobject_test_db', 'postgres');
 plan skip_all => 'No db connection' unless $dbh;
 
