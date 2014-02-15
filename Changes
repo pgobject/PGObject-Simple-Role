@@ -1,6 +1,9 @@
 Revision history for PGObject-Simple-Role
 
-0.70	2014-02-18
+0.71	2014-02-15
+	Fixed Makefile.PL to ensure proper dependencies
+
+0.70	2014-02-15
 	dbmethod() refactored so it is usable by libraries other than this one,
 	is better tested, and more general.  Use of the export here is now 
 	deprecated.
