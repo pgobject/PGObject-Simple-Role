@@ -20,5 +20,6 @@ no_index:
 requires:
   Moo::Role: 0
   PGObject::Simple: 0
+  PGObject::Util::DBMethod: 0
   Test::More: 0
-version: 0.52
+version: 0.71

@@ -18,7 +18,7 @@
 #     LICENSE => q[perl]
 #     NAME => q[PGObject::Simple::Role]
 #     PL_FILES => {  }
-#     PREREQ_PM => { Test::More=>q[0], PGObject::Simple=>q[0], Moo::Role=>q[0] }
+#     PREREQ_PM => { Test::More=>q[0], PGObject::Simple=>q[0], PGObject::Util::DBMethod=>q[0], Moo::Role=>q[0] }
 #     VERSION_FROM => q[lib/PGObject/Simple/Role.pm]
 #     clean => { FILES=>q[PGObject-Simple-Role-*] }
 #     dist => { COMPRESS=>q[gzip -9f], SUFFIX=>q[gz] }
@@ -60,11 +60,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = PGObject::Simple::Role
 NAME_SYM = PGObject_Simple_Role
-VERSION = 0.52
+VERSION = 0.71
 VERSION_MACRO = VERSION
-VERSION_SYM = 0_52
+VERSION_SYM = 0_71
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 0.52
+XS_VERSION = 0.71
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -256,7 +256,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = PGObject-Simple-Role
-DISTVNAME = PGObject-Simple-Role-0.52
+DISTVNAME = PGObject-Simple-Role-0.71
 
 
 # --- MakeMaker macro section:
@@ -499,8 +499,9 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) 'requires:' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Moo::Role: 0' >> META_new.yml
 	$(NOECHO) $(ECHO) '  PGObject::Simple: 0' >> META_new.yml
+	$(NOECHO) $(ECHO) '  PGObject::Util::DBMethod: 0' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Test::More: 0' >> META_new.yml
-	$(NOECHO) $(ECHO) 'version: 0.52' >> META_new.yml
+	$(NOECHO) $(ECHO) 'version: 0.71' >> META_new.yml
 	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
 	$(NOECHO) $(ECHO) Generating META.json
 	$(NOECHO) $(ECHO) '{' > META_new.json
@@ -539,12 +540,13 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '         "requires" : {' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Moo::Role" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "PGObject::Simple" : "0",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "PGObject::Util::DBMethod" : "0",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Test::More" : "0"' >> META_new.json
 	$(NOECHO) $(ECHO) '         }' >> META_new.json
 	$(NOECHO) $(ECHO) '      }' >> META_new.json
 	$(NOECHO) $(ECHO) '   },' >> META_new.json
 	$(NOECHO) $(ECHO) '   "release_status" : "stable",' >> META_new.json
-	$(NOECHO) $(ECHO) '   "version" : "0.52"' >> META_new.json
+	$(NOECHO) $(ECHO) '   "version" : "0.71"' >> META_new.json
 	$(NOECHO) $(ECHO) '}' >> META_new.json
 	-$(NOECHO) $(MV) META_new.json $(DISTVNAME)/META.json
 
@@ -840,12 +842,13 @@ testdb_static :: testdb_dynamic
 # --- MakeMaker ppd section:
 # Creates a PPD (Perl Package Description) for a binary distribution.
 ppd :
-	$(NOECHO) $(ECHO) '<SOFTPKG NAME="$(DISTNAME)" VERSION="0.52">' > $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '<SOFTPKG NAME="$(DISTNAME)" VERSION="0.71">' > $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <ABSTRACT>Moo/Moose mappers for minimalist PGObject framework</ABSTRACT>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <AUTHOR>Chris Travers, &lt;chris.travers@gmail.com&gt;</AUTHOR>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Moo::Role" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="PGObject::Simple" />' >> $(DISTNAME).ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="PGObject::Util::DBMethod" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Test::More" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <ARCHITECTURE NAME="i386-linux-thread-multi-5.14" />' >> $(DISTNAME).ppd
 	$(NOECHO) $(ECHO) '        <CODEBASE HREF="" />' >> $(DISTNAME).ppd
