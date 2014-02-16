@@ -16,7 +16,6 @@ WriteMakefile(
         'Test::More' => 0,
         'Moo::Role' => 0,
         'PGObject::Simple' => 0,
-        'PGObject::Util::DBMethod' => 0,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'PGObject-Simple-Role-*' },

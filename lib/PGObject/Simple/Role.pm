@@ -4,7 +4,6 @@ use 5.006;
 use strict;
 use warnings;
 use Moo::Role;
-use PGObject::Util::DBMethod;
 use PGObject::Simple;
 use Carp;
 
@@ -14,11 +13,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 0.71
+Version 1.00
 
 =cut
 
-our $VERSION = '0.71';
+our $VERSION = '1.00';
 
 
 =head1 SYNOPSIS
@@ -163,14 +162,18 @@ sub call_procedure {
     my $self = shift @_;
     my %args = @_;
     my $obj = _build__PGObject_Simple($self);
-    $obj->{_DBH} = "$self"->_get_dbh unless ref $self;
+    $obj->{_DBH} = $self->_DBH if ref $self and !$args{dbh};
+    $obj->{_DBH} = "$self"->_get_dbh unless ref $self or $args{dbh};
     if (ref $self){
-        $args{funcprefix} = $self->_get_prefix unless defined $args{funcprefix};
+        $args{funcprefix} = $self->_funcprefix 
+                  unless defined $args{funcprefix} or !ref $self;
     } else {
         $args{funcprefix} = "$self"->_get_prefix
-                 unless defined $args{funcprefix};
+                 unless defined $args{funcprefix} or ref $self;
     }
-    return $obj->call_procedure(%args);
+    my @rows = $obj->call_procedure(%args);
+    return @rows if wantarray;
+    return shift @rows;
 }
 
 =head2 call_dbmethod
@@ -185,28 +188,64 @@ mypackage->call_dbmethod() and $myobject->call_dbmethod() both work.
 sub call_dbmethod {
     my $self = shift @_;
     my %args = @_;
-    my $obj = _build__PGObject_Simple($self);
-    $obj->{_DBH} = "$self"->_get_dbh unless ref $self;
-    if (ref $self){
-        $args{funcprefix} = $self->_get_prefix unless defined $args{funcprefix};
-    } else {
-        $args{funcprefix} = "$self"->_get_prefix 
-                              unless defined $args{funcprefix};
+    croak 'No function name provided' unless $args{funcname};
+
+    $args{dbh} = $self->_DBH if ref $self and !$args{dbh};
+    $args{dbh} = "$self"->_get_dbh() unless $args{dbh};
+    $args{funcprefix} = $self->_funcprefix if ref $self;
+    $args{funcprefix} = "$self"->_get_prefix 
+           unless $args{funcprefix} or ref $self;
+    $args{funcprefix} ||= '';
+
+    my $info = PGObject->function_info(%args);
+
+    my $dbargs = [];
+    for my $arg (@{$info->{args}}){
+        $arg->{name} =~ s/^in_//;
+        my $db_arg;
+        eval { $db_arg = $self->can($arg->{name})->($self) } if ref $self;
+        if ($args{args}->{$arg->{name}}){
+            $db_arg = $args{args}->{$arg->{name}};
+        }
+        if (eval {$db_arg->can('to_db')}){
+           $db_arg = $db_arg->to_db;
+        }
+        if ($arg->{type} eq 'bytea'){
+           $db_arg = { type => 'bytea', value => $db_arg};
+        }
+        push @$dbargs, $db_arg;
     }
-    $obj->call_dbmethod(%args);
-}
+    $args{args} = $dbargs;
+    my @rows;
+    if (ref $self){
+        @rows = $self->call_procedure(%args);
+    } else {
+        @rows = "$self"->call_procedure(%args);
+    }
+    return @rows if wantarray;
+    return shift @rows;
+}    
+
+=head1 REMOVED METHODS
+
+These methods were once part of this package but have been removed due to
+the philosophy of not adding framework dependencies when an application 
+dependency can work just as well. 
 
 =head2 dbmethod
 
-THIS SYNTAX IS DEPRECATED.
+Included in versions 0.50 - 0.71.
 
 Instead of using this directly, use:
 
    use PGObject::Util::DBMethod;
 
-instead.  This function merely allows you to use the dbmethod as exported by
-that module, but due to late binding, parentheses are needed.   Please do not
-use it for new code.  Chances are when we get to 2.0, this method will be gone.
+instead.  Ideally this should be done in your actual class since that will 
+allow you to dispense with the extra parentheses.  However, if you need a
+backwards-compatible and central solution, since PGObject::Simple::Role 
+generally assumes sub-roles will be created for managing db connections etc. 
+you can put the use statement there and it will have the same impact as it did
+here when it was removed with the benefit of better testing.
 
 =head1 AUTHOR
 

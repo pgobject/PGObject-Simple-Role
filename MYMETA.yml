@@ -21,4 +21,4 @@ requires:
   Moo::Role: 0
   PGObject::Simple: 0
   Test::More: 0
-version: 0.52
+version: 1.00

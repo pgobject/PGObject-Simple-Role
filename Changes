@@ -1,5 +1,10 @@
 Revision history for PGObject-Simple-Role
 
+1.00	2014-02-18 (planned)
+	Correct handling of lazy attributes
+	Removed dbmethod() and documented why
+	Contextual return of results so scalars return first row.
+
 0.71	2014-02-15
 	Fixed Makefile.PL to ensure proper dependencies
 
