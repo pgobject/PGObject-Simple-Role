@@ -4,7 +4,6 @@ use 5.006;
 use strict;
 use warnings;
 use Moo::Role;
-use PGObject::Util::DBMethod;
 use PGObject::Simple;
 use Carp;
 
@@ -14,11 +13,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 0.71
+Version 1.00
 
 =cut
 
-our $VERSION = '0.71';
+our $VERSION = '1.00';
 
 
 =head1 SYNOPSIS
@@ -172,7 +171,9 @@ sub call_procedure {
         $args{funcprefix} = "$self"->_get_prefix
                  unless defined $args{funcprefix} or ref $self;
     }
-    return $obj->call_procedure(%args);
+    my @rows = $obj->call_procedure(%args);
+    return @rows if wantarray;
+    return shift @rows;
 }
 
 =head2 call_dbmethod
@@ -215,8 +216,14 @@ sub call_dbmethod {
         push @$dbargs, $db_arg;
     }
     $args{args} = $dbargs;
-    return $self->call_procedure(%args) if ref $self;
-    return "$self"->call_procedure(%args);
+    my @rows;
+    if (ref $self){
+        @rows = $self->call_procedure(%args);
+    } else {
+        @rows = "$self"->call_procedure(%args);
+    }
+    return @rows if wantarray;
+    return shift @rows;
 }    
 
 =head1 REMOVED METHODS
