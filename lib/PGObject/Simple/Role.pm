@@ -25,6 +25,7 @@ our $VERSION = '1.00';
 Take the following (Moose) class:
 
     package MyAPP::Foo;
+    use PGObject::Util::DBMethod;
     use Moose;
     with 'PGObject::Simple::Role';
 
@@ -36,7 +37,8 @@ Take the following (Moose) class:
     sub get_dbh {
         return DBI->connect('dbi:Pg:dbname=foobar');
     }
-    dbmethod(int => (funcname => 'foo_to_int'));
+    #  PGObject::Util::DBMethod exports this
+    dbmethod int => (funcname => 'foo_to_int');
 
 And a stored procedure:  
 
