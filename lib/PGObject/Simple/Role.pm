@@ -102,6 +102,22 @@ sub _get_registry{
     return undef;
 }
 
+has _funcschema => (is => 'lazy');
+
+=head2 _get_schema
+
+Returns the default schema associated with the object.
+
+=cut
+
+sub _build__funcschema {
+    return $_[0]->_get_schema;
+}
+
+sub _get_schema {
+    return undef;
+}
+
 has _funcprefix => (is => 'lazy');
 
 =head2 _get_prefix
@@ -169,9 +185,13 @@ sub call_procedure {
     if (ref $self){
         $args{funcprefix} = $self->_funcprefix 
                   unless defined $args{funcprefix} or !ref $self;
+        $args{funcschema} = $self->_funcschema 
+                  unless defined $args{funcschema} or !ref $self;
     } else {
         $args{funcprefix} = "$self"->_get_prefix
                  unless defined $args{funcprefix} or ref $self;
+        $args{funcschema} = "$self"->_get_schema
+                 unless defined $args{funcschema} or ref $self;
     }
     my @rows = $obj->call_procedure(%args);
     return @rows if wantarray;
@@ -194,9 +214,14 @@ sub call_dbmethod {
 
     $args{dbh} = $self->_DBH if ref $self and !$args{dbh};
     $args{dbh} = "$self"->_get_dbh() unless $args{dbh};
-    $args{funcprefix} = $self->_funcprefix if ref $self;
-    $args{funcprefix} = "$self"->_get_prefix 
-           unless $args{funcprefix} or ref $self;
+    if (ref $self){
+        $args{funcprefix} = $self->_funcprefix unless defined $args{funcprefix};
+        $args{funcschema} = $self->_funcschema unless $args{funcschema};
+    } else {
+        $args{funcprefix} = "$self"->_get_prefix 
+             unless defined $args{funcprefix};
+        $args{funcschema} = "$self"->_get_schema unless $args{funcschema};
+    }
     $args{funcprefix} ||= '';
 
     my $info = PGObject->function_info(%args);
