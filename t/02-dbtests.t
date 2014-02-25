@@ -57,12 +57,19 @@ $dbh1->do('CREATE DATABASE pgobject_test_db');
 our $dbh = DBI->connect('dbi:Pg:dbname=pgobject_test_db', 'postgres');
 plan skip_all => 'No db connection' unless $dbh;
 
-plan tests => 14;
+plan tests => 17;
 
 $dbh->do('
    CREATE FUNCTION public.foobar (in_foo text, in_bar text, in_baz int, in_id int)
       RETURNS int language sql as $$
           SELECT char_length($1) + char_length($2) + $3 * $4;
+      $$;
+') ;
+$dbh->do('CREATE SCHEMA TEST');
+$dbh->do('
+   CREATE FUNCTION test.foobar (in_foo text, in_bar text, in_baz int, in_id int)
+      RETURNS int language sql as $$
+          SELECT 2*(char_length($1) + char_length($2) + $3 * $4);
       $$;
 ') ;
 $dbh->do('
@@ -86,6 +93,10 @@ is($result->{lazy_foobar}, 340, 'Correct handling of lazy attributes');
 ($result) = $obj->call_procedure(funcname => 'foobar',
                                      args => ['test1', 'testing', '3', '33']);
 is($result->{foobar}, 111, 'Correct result, call_procedure');
+($result) = $obj->call_procedure(funcname => 'foobar',
+                               funcschema => 'test',
+                                     args => ['test1', 'testing', '3', '33']);
+is($result->{foobar}, 222, 'Correct result, call_procedure');
 ($result) = test->call_procedure(funcname => 'foobar',
                                      args => ['test1', 'testing', '3', '33']);
 is($result->{foobar}, 111, 'Correct result, direct package call to call_procedure');
@@ -114,6 +125,16 @@ is($result->{foobar}, 111, 'Correct result, call_procedure');
 
 ($result) = $obj->call_dbmethod(funcname => 'bar', args=> {baz => 1});
 is($result->{foobar}, 13, 'Correct result, argument overrides');
+
+$obj->{_funcschema} = 'test';
+($result) = $obj->call_procedure(funcname => 'bar',
+                                     args => ['test1', 'testing', '3', '33']);
+
+is($result->{foobar}, 222, 'Correct result, call_procedure, set schema');
+
+($result) = $obj->call_dbmethod(funcname => 'bar', args=> {baz => 1});
+is($result->{foobar}, 26, 'Correct result, argument overrides');
+
 throws_ok{$obj->call_dbmethod(funcname => 'bar', dbh => $dbh1)} qr/No such function/, 'No such function thrown using wrong db';
 
 # Teardown connections

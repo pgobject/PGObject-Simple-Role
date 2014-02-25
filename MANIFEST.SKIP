@@ -2,6 +2,7 @@
 #!start included /usr/lib/perl5/5.10/ExtUtils/MANIFEST.SKIP
 # Avoid version control files.
 \B\.svn\b
+\B\.hg\b
 \B\.git\b
 \B\.gitignore\b
 
