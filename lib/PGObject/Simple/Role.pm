@@ -13,11 +13,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 1.01
+Version 1.10.01
 
 =cut
 
-our $VERSION = '1.01';
+our $VERSION = '1.10.01';
 
 
 =head1 SYNOPSIS
