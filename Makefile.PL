@@ -9,7 +9,7 @@ WriteMakefile(
     VERSION_FROM        => 'lib/PGObject/Simple/Role.pm',
     ABSTRACT_FROM       => 'lib/PGObject/Simple/Role.pm',
     ($ExtUtils::MakeMaker::VERSION >= 6.3002
-      ? ('LICENSE'=> 'perl')
+      ? ('LICENSE'=> 'BSD')
       : ()),
     PL_FILES            => {},
     PREREQ_PM => {

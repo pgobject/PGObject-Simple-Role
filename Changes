@@ -1,5 +1,8 @@
 Revision history for PGObject-Simple-Role
 
+1.10.01 2014-05-01
+	Fixed wrong licensing reference in Makefile
+
 1.01	2014-02-25
 	Handling of per-class default schemas
 
