@@ -13,11 +13,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 1.11.0
+Version 1.12.0
 
 =cut
 
-our $VERSION = '1.11.0';
+our $VERSION = '1.12.0';
 
 
 =head1 SYNOPSIS
@@ -194,6 +194,11 @@ sub call_procedure {
                  unless defined $args{funcschema} or ref $self;
     }
     my @rows = $obj->call_procedure(%args);
+    for my $row (@rows){
+        for (keys %$row){
+            delete $row->{$_} unless defined $row->{$_};
+        }
+    }
     return @rows if wantarray;
     return shift @rows;
 }
