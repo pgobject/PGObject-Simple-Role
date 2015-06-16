@@ -1,5 +1,8 @@
 Revision history for PGObject-Simple-Role
 
+1.11.0  2014-08-25
+        Now safe regarding memoized PGObject catalog lookups
+
 1.10.01 2014-05-01
 	Fixed wrong licensing reference in Makefile
 
