@@ -1,5 +1,8 @@
 Revision history for PGObject-Simple-Role
 
+1.12.0  2016-02-12
+        Fixing warning about unitialized value in subroutine entry
+
 1.11.0  2014-08-25
         Now safe regarding memoized PGObject catalog lookups
 
