@@ -236,7 +236,8 @@ sub call_dbmethod {
         my $argname = $_->{name};
         my $db_arg;
         $argname =~ s/^in_//;
-        eval { $db_arg = $self->can($argname)->($self) } if ref $self;
+        local $@;
+        eval { $db_arg = $self->can($argname)->($self) } if ref $self and $argname;
         $db_arg = $args{args}->{$argname} if $args{args}->{$argname};
         $db_arg = $db_arg->to_db if eval {$db_arg->can('to_db')};
         $db_arg = { type => 'bytea', value => $db_arg} if $_->{type} eq 'bytea';
