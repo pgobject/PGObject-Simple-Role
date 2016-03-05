@@ -85,12 +85,6 @@ sub _build__DBH {
     return $self->_get_dbh;
 }
 
-has _Registry => (is => 'lazy');
-
-sub _build__Registry {
-    return _get_registry();
-}
-
 =head2 _get_registry
 
 This is a method the consuming classes can override in order to set the
