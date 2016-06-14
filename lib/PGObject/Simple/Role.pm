@@ -13,11 +13,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 1.12.0
+Version 1.12.1
 
 =cut
 
-our $VERSION = '1.12.0';
+our $VERSION = '1.12.1';
 
 
 =head1 SYNOPSIS
@@ -83,6 +83,12 @@ has _DBH => (
 sub _build__DBH {
     my ($self) = @_;
     return $self->_get_dbh;
+}
+
+has _Registry => (is => 'lazy');
+
+sub _build__Registry {
+    return _get_registry();
 }
 
 =head2 _get_registry
@@ -163,10 +169,7 @@ sub _get_dbh {
 
 =head2 call_procedure
 
-Identical interface to PGObject::Simple->call_procedure.
-
-This can be used on objects or on the packages themselves.  I.e.  
-mypackage->call_procedure() and $myobject->call_procedure() both work.
+Identical to PGObject::Simple::call_procedure
 
 =cut
 
@@ -272,6 +275,12 @@ here when it was removed with the benefit of better testing.
 
 =head1 AUTHOR
 
+Chris Travers,, C<< <chris.travers at gmail.com> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<bug-pgobject-simple-role at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=PGObject-Simple-Role>.  I will be notified, and then you'll
 Chris Travers,, C<< <chris.travers at gmail.com> >>
 
 =head1 BUGS
