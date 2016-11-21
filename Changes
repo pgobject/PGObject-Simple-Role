@@ -1,6 +1,9 @@
 Revision history for PGObject-Simple-Role
 
 
+1.13.2  2016-11-21
+        Fix minimum required dependency
+
 1.13.1  2016-11-21
         Fix minimum required dependency
 
