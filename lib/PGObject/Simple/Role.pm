@@ -13,11 +13,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 1.12.1
+Version 1.13.0
 
 =cut
 
-our $VERSION = '1.12.1';
+our $VERSION = '1.13.0';
 
 
 =head1 SYNOPSIS
@@ -234,11 +234,9 @@ sub call_dbmethod {
         my $db_arg;
         $argname =~ s/^in_//;
         local $@;
-        eval { $db_arg = $self->can($argname)->($self) } if ref $self and $argname;
+        eval { $db_arg = $self->can($argname)->($self) }
+            if ref $self and $argname;
         $db_arg = $args{args}->{$argname} if exists $args{args}->{$argname};
-        $db_arg = $db_arg->to_db if eval {$db_arg->can('to_db')};
-        $db_arg = { type => 'bytea', value => $db_arg} if $_->{type} eq 'bytea';
-
         $db_arg;
     } @{$info->{args}};
     $args{args} = $dbargs;
