@@ -1,5 +1,9 @@
 Revision history for PGObject-Simple-Role
 
+
+1.13.1  2016-11-21
+        Fix minimum required dependency
+
 1.13.0  2016-11-20
         Fix issue #8: Let PGObject handle $value->to_db() calls
         Fix issue #9: No special casing of BYTEA function arguments
