@@ -17,7 +17,7 @@ WriteMakefile(
     PREREQ_PM => {
         'Test::More' => 0,
         'Moo::Role' => 0,
-        'PGObject::Simple' => 0,
+        'PGObject::Simple' => '1.9',
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'PGObject-Simple-Role-*' },
