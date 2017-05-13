@@ -1,5 +1,11 @@
 Revision history for PGObject-Simple-Role
 
+2.0	2017-05-19
+	Depending now on PGObject::Simple 3
+	No more code duplication
+	We share state with PGObject functions
+	New architecture.
+
 1.12.1  2016-06-14
 	Properly handling null when explicitly set.
         Doc fixes
