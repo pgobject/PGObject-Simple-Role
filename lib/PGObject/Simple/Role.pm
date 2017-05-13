@@ -19,7 +19,6 @@ Version 2
 
 our $VERSION = 2.000000;
 
-
 =head1 SYNOPSIS
 
 Take the following (Moose) class:
@@ -183,6 +182,7 @@ sub funcprefix {
     my ($self) = @_;
     return $self->_funcprefix;
 }
+
 =head1 REMOVED METHODS
 
 These methods were once part of this package but have been removed due to
