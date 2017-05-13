@@ -1,4 +1,3 @@
-use Carp::Always;
 package test;
 
 use Moo;
