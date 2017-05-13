@@ -23,7 +23,7 @@ sub _get_dbh {
 
 package main;
 
-use Test::More tests => 11;
+use Test::More tests => 12;
 use Test::Exception;
 use DBI;
 
@@ -40,6 +40,7 @@ my $obj;
 lives_ok {$obj = test1->new(%args)} 'created new object without crashing';
 ok(eval {$obj->isa('test1')}, 'ISA test passed');
 is($obj->id, 3, 'attribute id passed');
+is($obj->_registry, undef, 'Undefined registry at first');
 is($obj->foo, 'test1', 'attribute foo passed');
 is($obj->bar, 'test2', 'attribute bar passed');
 is($obj->baz, 33, 'attribute baz passed');

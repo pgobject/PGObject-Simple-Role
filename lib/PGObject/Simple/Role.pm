@@ -88,10 +88,12 @@ sub _get_dbh {
     croak 'Invoked _get_dbh from role improperly.  Subclasses MUST set this method';
 }
 
-has _Registry => (is => 'lazy');
+has _registry => (is => 'lazy');
 
-sub _build__Registry {
-    return _get_registry();
+sub _build__registry {
+    my ($self) = @_;
+    return $self->_get_registry() if $self->can('_get_registry');
+    _get_registry();
 }
 
 =head2 _get_registry
@@ -136,13 +138,6 @@ sub _build__funcprefix {
 
 sub _get_prefix {
     return '';
-}
-
-has _registry => ( is => 'lazy' );
-
-sub _build__registry {
-    my ($self) = @_;
-    $self->get_registry();
 }
 
 =head1 READ ONLY ACCESSORS (PUBLIC)
