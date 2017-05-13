@@ -258,7 +258,7 @@ L<http://search.cpan.org/dist/PGObject-Simple-Role/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2013-2014 Chris Travers,.
+Copyright 2013-2017 Chris Travers,.
 
 Redistribution and use in source and compiled forms with or without 
 modification, are permitted provided that the following conditions are met:
