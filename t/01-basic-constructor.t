@@ -19,11 +19,13 @@ sub _get_dbh {
     return 1;
 }
 
+sub _get_prefix { 'foo' };
+
 ##########
 
 package main;
 
-use Test::More tests => 12;
+use Test::More tests => 14;
 use Test::Exception;
 use DBI;
 
@@ -40,6 +42,7 @@ my $obj;
 lives_ok {$obj = test1->new(%args)} 'created new object without crashing';
 ok(eval {$obj->isa('test1')}, 'ISA test passed');
 is($obj->id, 3, 'attribute id passed');
+is($obj->funcprefix, '', 'Got correct function prefix(empty)');
 is($obj->_registry, undef, 'Undefined registry at first');
 is($obj->foo, 'test1', 'attribute foo passed');
 is($obj->bar, 'test2', 'attribute bar passed');
@@ -49,6 +52,7 @@ throws_ok {$obj->_build__dbh(1)} qr/Subclasses MUST set/,
           'Threw exception, "Subclasses MUST set"';
 
 lives_ok {$obj = test2->new(%args)} 'created new object without crashing';
+is($obj->funcprefix, 'foo', 'Got correct function prefix');
 throws_ok {$obj->_dbh} qr/Expected a database handle/, 
           'Threw exception, "Expected a database handle"';
 lives_ok {$obj->set_dbh(4) } 'set-dbh goes through isa check';

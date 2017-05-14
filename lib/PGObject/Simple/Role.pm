@@ -13,11 +13,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 2
+Version 2.0.1
 
 =cut
 
-our $VERSION = 2.000000;
+our $VERSION = 2.000001;
 
 =head1 SYNOPSIS
 
@@ -133,7 +133,8 @@ stored prcedures to an object class.
 =cut
 
 sub _build__funcprefix {
-    return $_[0]->_get_prefix;
+    my ($self)  = @_;
+    return $self->_get_prefix;
 }
 
 sub _get_prefix {
@@ -164,7 +165,8 @@ Returns the schema bound to the object
 
 sub funcschema {
     my ($self)  = @_;
-    return $self->_funcschema;
+    return $self->_funcschema if ref $self;
+    return "$self"->_get_schema();
 }
 
 =head2 funcprefix
@@ -175,7 +177,9 @@ Prefix for functions
 
 sub funcprefix {
     my ($self) = @_;
-    return $self->_funcprefix;
+    
+    return $self->_funcprefix if ref $self;
+    return "$self"->_get_prefix();
 }
 
 =head1 REMOVED METHODS
