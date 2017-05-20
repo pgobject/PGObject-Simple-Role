@@ -13,11 +13,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 2.0.1
+Version 2.0.2
 
 =cut
 
-our $VERSION = 2.000001;
+our $VERSION = 2.000002;
 
 =head1 SYNOPSIS
 
@@ -79,9 +79,25 @@ has _dbh => (  # use dbh() to get and set_dbh() to set
        },
 );
 
+has _DBH => ( # backwards compatible for 1.x. 
+	is => 'lazy',
+       isa => sub { 
+                    warn 'deprecated _DBH used.  rename to _dbh when you can';
+                    croak "Expected a database handle.  Got $_[0] instead"
+                       unless eval {$_[0]->isa('DBI::db')};
+       },
+);
+
 sub _build__dbh {
     my ($self) = @_;
+    return $self->{_DBH} if $self->{_DBH};
     return $self->_get_dbh;
+}
+
+sub _build__DBH {
+    my ($self) = @_;
+    return $self->{_dbh} if $self->{_dbh};
+    return $self->_dbh;
 }
 
 sub _get_dbh {
