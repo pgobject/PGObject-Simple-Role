@@ -1,5 +1,9 @@
 Revision history for PGObject-Simple-Role
 
+2.0.3   2019-03-29
+        Fix GitHub issue #14, documentation suggests the need to
+        implement 'get_dbh()' where it's actually `_get_dbh()`
+
 2.0.2	2017-05-20
 	Fixing backwards compatibility issue with _DBH in constructor
 

@@ -33,7 +33,7 @@ Take the following (Moose) class:
     has bar => (is => 'ro', isa => 'Str', required => 0);
     has baz => (is => 'ro', isa => 'Int', required => 0);
 
-    sub get_dbh {
+    sub _get_dbh {
         return DBI->connect('dbi:Pg:dbname=foobar');
     }
     #  PGObject::Util::DBMethod exports this
