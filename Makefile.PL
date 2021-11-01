@@ -22,7 +22,7 @@ WriteMakefile(
     },
     TEST_REQUIRES => {
         'Test::More' => 0,
-    }
+    },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'PGObject-Simple-Role-*' },
     META_MERGE => {
