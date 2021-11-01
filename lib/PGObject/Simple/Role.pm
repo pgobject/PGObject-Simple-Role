@@ -1,11 +1,12 @@
 package PGObject::Simple::Role;
 
 use 5.010;
-use strict;
-use warnings;
-use Moo::Role;
+
 use PGObject::Simple ':full', '!dbh';
-use Carp;
+use Carp::Clan qw(^PGObject\b);
+
+use Moo::Role;
+# Anything imported after `use Moo::Role;` will be composed into consuming packages.
 
 =head1 NAME
 

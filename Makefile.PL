@@ -15,10 +15,24 @@ WriteMakefile(
       : ()),
     PL_FILES            => {},
     PREREQ_PM => {
-        'Test::More' => 0,
+        'Carp::Clan' => 0,
+        'Log::Any' => 0,
         'Moo::Role' => 0,
         'PGObject::Simple' => 3,
     },
+    TEST_REQUIRES => {
+        'Test::More' => 0,
+    }
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'PGObject-Simple-Role-*' },
+    META_MERGE => {
+        'meta-spec' => { version => 2 },
+         resources => {
+             repository => {
+                 type => 'git',
+                 url  => 'https://github.com/ledgersmb/PGObject-Simple-Role.git',
+                 web  => 'https://github.com/ledgersmb/PGObject-Simple-Role',
+             },
+         },
+    },
 );
