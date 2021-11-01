@@ -2,8 +2,10 @@ package PGObject::Simple::Role;
 
 use 5.010;
 
+use Carp::Clan qr/^PGObject\b/;
+use Log::Any qw($log);
+
 use PGObject::Simple ':full', '!dbh';
-use Carp::Clan qw(^PGObject\b);
 
 use Moo::Role;
 # Anything imported after `use Moo::Role;` will be composed into consuming packages.
@@ -14,19 +16,19 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 2.0.2
+Version 2.1.0
 
 =cut
 
-our $VERSION = 2.000002;
+our $VERSION = '2.1.0';
 
 =head1 SYNOPSIS
 
-Take the following (Moose) class:
+Take the following (Moo) class:
 
     package MyAPP::Foo;
     use PGObject::Util::DBMethod;
-    use Moose;
+    use Moo;
     with 'PGObject::Simple::Role';
 
     has id  => (is => 'ro', isa => 'Int', required => 0);
@@ -73,19 +75,19 @@ declarative mapping.
 
 
 has _dbh => (  # use dbh() to get and set_dbh() to set
-       is => 'lazy', 
-       isa => sub { 
-                    croak "Expected a database handle.  Got $_[0] instead"
-                       unless eval {$_[0]->isa('DBI::db')};
+       is => 'lazy',
+       isa => sub {
+           croak $log->error( "Expected a database handle.  Got $_[0] instead" )
+               unless eval {$_[0]->isa('DBI::db')};
        },
 );
 
-has _DBH => ( # backwards compatible for 1.x. 
-	is => 'lazy',
-       isa => sub { 
-                    warn 'deprecated _DBH used.  rename to _dbh when you can';
-                    croak "Expected a database handle.  Got $_[0] instead"
-                       unless eval {$_[0]->isa('DBI::db')};
+has _DBH => ( # backwards compatible for 1.x.
+        is => 'lazy',
+       isa => sub {
+           warn $log->warn( 'deprecated _DBH used.  rename to _dbh when you can' );
+           croak $log->error( "Expected a database handle.  Got $_[0] instead" )
+               unless eval {$_[0]->isa('DBI::db')};
        },
 );
 
@@ -169,7 +171,7 @@ Wraps the PGObject::Simple method
 sub dbh {
     my ($self) = @_;
     if (ref $self){
-	return $self->_dbh;
+        return $self->_dbh;
     }
     return "$self"->_get_dbh;
 }
@@ -252,19 +254,11 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker (report bugs here)
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=PGObject-Simple-Role>
+L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=PGObject-Simple-Role>
 
-=item * AnnoCPAN: Annotated CPAN documentation
+=item * MetaCPAN
 
-L<http://annocpan.org/dist/PGObject-Simple-Role>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/PGObject-Simple-Role>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/PGObject-Simple-Role/>
+L<https://metacpan.org/dist/PGObject-Simple-Role>
 
 =back
 
@@ -274,7 +268,8 @@ L<http://search.cpan.org/dist/PGObject-Simple-Role/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2013-2017 Chris Travers,.
+  Copyright 2013-2017 Chris Travers
+  Copyright 2016-2021 The LedgerSMB Core team
 
 Redistribution and use in source and compiled forms with or without 
 modification, are permitted provided that the following conditions are met:

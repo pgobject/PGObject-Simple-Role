@@ -18,10 +18,10 @@ INSTALLATION
 
 To install this module, run the following commands:
 
-	perl Makefile.PL
-	make
-	make test
-	make install
+        perl Makefile.PL
+        make
+        make test
+        make install
 
 SUPPORT AND DOCUMENTATION
 
@@ -33,21 +33,16 @@ perldoc command.
 You can also look for information at:
 
     RT, CPAN's request tracker (report bugs here)
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=PGObject-Simple-Role
+        https://rt.cpan.org/NoAuth/Bugs.html?Dist=PGObject-Simple-Role
 
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/PGObject-Simple-Role
-
-    CPAN Ratings
-        http://cpanratings.perl.org/d/PGObject-Simple-Role
-
-    Search CPAN
-        http://search.cpan.org/dist/PGObject-Simple-Role/
+    MetaCPAN
+        https://metacpan.org/dist/PGObject-Simple-Role
 
 
 LICENSE AND COPYRIGHT
 
-Copyright (C) 2013 Chris Travers
+  Copyright 2013-2017 Chris Travers
+  Copyright 2016-2021 The LedgerSMB Core team
 
 Redistribution and use in source and compiled forms with or without 
 modification, are permitted provided that the following conditions are met:
