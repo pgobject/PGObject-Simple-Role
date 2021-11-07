@@ -1,5 +1,9 @@
 Revision history for PGObject-Simple-Role
 
+2.1.0   2021-11-07
+        Add logging of errors before croak-ing
+        Use Carp::Clan for croaking, with "clan" ^PGObject\b
+
 2.0.3   2019-03-29
         Fix GitHub issue #14, documentation suggests the need to
         implement 'get_dbh()' where it's actually `_get_dbh()`
