@@ -5,10 +5,10 @@ use 5.010;
 use Carp::Clan qr/^PGObject\b/;
 use Log::Any qw($log);
 
-use PGObject::Simple ':full', '!dbh';
-
 use Moo::Role;
 # Anything imported after `use Moo::Role;` will be composed into consuming packages.
+use PGObject::Simple ':full', '!dbh';
+
 
 =head1 NAME
 
@@ -16,11 +16,11 @@ PGObject::Simple::Role - Moo/Moose mappers for minimalist PGObject framework
 
 =head1 VERSION
 
-Version 2.1.0
+Version 2.1.1
 
 =cut
 
-our $VERSION = '2.1.0';
+our $VERSION = '2.1.1';
 
 =head1 SYNOPSIS
 

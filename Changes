@@ -1,5 +1,9 @@
 Revision history for PGObject-Simple-Role
 
+
+2.1.1   2021-11-07
+        Fix PGObject::Simple's methods not being exported from PGObject::Simple::Role
+
 2.1.0   2021-11-07
         Add logging of errors before croak-ing
         Use Carp::Clan for croaking, with "clan" ^PGObject\b
